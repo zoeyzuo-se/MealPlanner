@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +18,9 @@ type Meal struct {
 	MealCategory        string `json:"meal_category"`
 	MealMethod          string `json:"meal_method"`
 }
+
+var mealCategories = []string{"荤", "素"}
+var mealMethods = []string{"炒", "蒸", "炖", "烤"}
 
 var meals []Meal
 
@@ -39,6 +44,18 @@ func addMeal(c *gin.Context) {
 
 	// Generate a new MealID by adding 1 to the length of the meals slice
 	meal.ID = len(meals) + 1
+	categoryError := fmt.Sprintf("Meal catogory should be one of: %q", strings.Join(mealCategories, " "))
+
+	if !isMealCategoryValid(meal) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": categoryError})
+		return
+	}
+
+	methodError := fmt.Sprintf("Meal method should be one of: %q", strings.Join(mealMethods, " "))
+	if !isMealMethodValid(meal) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": methodError})
+		return
+	}
 
 	// Append the new Meal to the meals slice
 	meals = append(meals, meal)
@@ -71,4 +88,21 @@ func getMealByName(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func isMealCategoryValid(input Meal) bool {
+	return stringInSlice(input.MealCategory, mealCategories)
+}
+
+func isMealMethodValid(input Meal) bool {
+	return stringInSlice(input.MealMethod, mealMethods)
 }
