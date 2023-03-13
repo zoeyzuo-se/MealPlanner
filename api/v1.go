@@ -2,17 +2,20 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/meal-planner/models"
+	"github.com/meal-planner/pkg/recipes"
 )
 
-var recipes []models.Recipe
+var recipe_list []models.Recipe
 
-func addRecipe(c *gin.Context) {
+func AddRecipe(c *gin.Context) {
 	var newRecipe models.Recipe
 
 	// Bind the JSON request body to the Recipe struct
@@ -21,14 +24,26 @@ func addRecipe(c *gin.Context) {
 		return
 	}
 
-	// Generate a new RecipeID by adding 1 to the length of the meals slice
-	newRecipe.ID = len(recipes) + 1
+	// Generate a new RecipeID by adding 1 to the length of the recipes slice
+	newRecipe.ID = len(recipe_list) + 1
+	categoryError := fmt.Sprintf("Recipe catogory should be one of: %q", strings.Join(recipes.GetRecipeCategories(), " "))
 
-	// Append the new Recipe to the meals slice
-	recipes = append(recipes, newRecipe)
+	if !recipes.IsRecipeCategoryValid(newRecipe) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": categoryError})
+		return
+	}
 
-	// Marshal the meals slice to JSON and write it to a file
-	data, _ := json.Marshal(recipes)
+	methodError := fmt.Sprintf("Recipe method should be one of: %q", strings.Join(recipes.GetRecipeMethods(), " "))
+	if !recipes.IsRecipeMethodValid(newRecipe) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": methodError})
+		return
+	}
+
+	// Append the new Recipe to the recipes slice
+	recipe_list = append(recipe_list, newRecipe)
+
+	// Marshal the recipes slice to JSON and write it to a file
+	data, _ := json.Marshal(recipe_list)
 	err := ioutil.WriteFile("recipes.json", data, 0644)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write file"})
@@ -39,7 +54,7 @@ func addRecipe(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": newRecipe})
 }
 
-func getRecipeByName(c *gin.Context) {
+func GetRecipeByName(c *gin.Context) {
 	name := c.Param("name")
 	// Let's first read the `config.json` file
 	content, err := ioutil.ReadFile("recipes.json")
