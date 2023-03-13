@@ -27,8 +27,8 @@ var meals []Meal
 func main() {
 	router := gin.Default()
 
-	router.POST("/meal", addMeal)
-	router.GET("/meal/:name", getMealByName)
+	router.POST("/recipe", api.addRecipe)
+	router.GET("/recipe/:name", api.getRecipeByName)
 
 	router.Run(":8080")
 }
