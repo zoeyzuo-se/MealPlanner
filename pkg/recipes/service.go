@@ -1,6 +1,12 @@
 package recipes
 
-import "github.com/meal-planner/models"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/meal-planner/dbs"
+	"github.com/meal-planner/models"
+)
 
 var recipeCategories = []string{"荤", "素"}
 var recipeMethods = []string{"炒", "蒸", "炖", "烤"}
@@ -22,10 +28,20 @@ func IsRecipeMethodValid(input models.Recipe) bool {
 	return stringInSlice(input.RecipeMethod, recipeMethods)
 }
 
-func GetRecipeCategories() []string {
-	return recipeCategories
+func GenerateCategoryError() string {
+	return fmt.Sprintf("Recipe catogory should be one of: %q", strings.Join(recipeCategories, " "))
 }
 
-func GetRecipeMethods() []string {
-	return recipeMethods
+func GenerateMethodError() string {
+	return fmt.Sprintf("Recipe method should be one of: %q", strings.Join(recipeMethods, " "))
+}
+
+func AddRecipe(newRecipe *models.Recipe) error {
+	result := dbs.Database.Db.Create(newRecipe)
+	return result.Error
+}
+
+func GetRecipeByName(name string, recipe *models.Recipe) error {
+	result := dbs.Database.Db.Where("recipe_name = ?", name).First(recipe)
+	return result.Error
 }
