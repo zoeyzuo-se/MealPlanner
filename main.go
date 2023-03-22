@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/meal-planner/api"
+	"github.com/meal-planner/dbs"
 )
 
 func main() {
-	router := gin.Default()
+	if err := dbs.ConnectDb(); err != nil {
+		panic(err)
+	}
 
-	router.POST("/recipe", api.AddRecipe)
-	router.GET("/recipe/:name", api.GetRecipeByName)
-
-	router.Run(":8080")
+	api := api.NewRESTAPI()
+	api.Serve(":8080")
 }
