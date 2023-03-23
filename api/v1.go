@@ -18,6 +18,7 @@ func NewRESTAPI() *RESTApiv1 {
 
 	router.POST("/recipe", api.AddRecipe)
 	router.GET("/recipe/:name", api.GetRecipeByName)
+	router.GET("/recipes", api.GetRecipes)
 
 	return api
 }
@@ -61,4 +62,15 @@ func (api *RESTApiv1) GetRecipeByName(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": recipe})
+}
+
+func (api *RESTApiv1) GetRecipes(c *gin.Context) {
+	var recipeList []models.Recipe
+
+	if err := recipes.GetRecipes(&recipeList); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get recipes"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": recipeList})
 }
