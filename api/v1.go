@@ -20,6 +20,7 @@ func NewRESTAPI() *RESTApiv1 {
 	router.GET("/recipe/:name", api.GetRecipeByName)
 	router.GET("/recipes", api.GetRecipes)
 	router.PUT("/recipe/:name", api.UpdateRecipe)
+	router.DELETE("/recipe/:name", api.DeleteRecipe)
 
 	return api
 }
@@ -111,4 +112,21 @@ func (api *RESTApiv1) UpdateRecipe(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": recipe})
+}
+
+func (api *RESTApiv1) DeleteRecipe(c *gin.Context) {
+	name := c.Param("name")
+	var recipe models.Recipe
+
+	if err := recipes.GetRecipeByName(name, &recipe); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Recipe not found"})
+		return
+	}
+
+	if err := recipes.DeleteRecipe(&recipe); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete recipe"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": name + " successfully deleted."})
 }
