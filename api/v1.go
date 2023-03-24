@@ -130,3 +130,15 @@ func (api *RESTApiv1) DeleteRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": name + " successfully deleted."})
 }
+
+func (api *RESTApiv1) GetRecipeByCategory(c *gin.Context) {
+	category := c.Param("category")
+	var recipeList []models.Recipe
+
+	if err := recipes.GetRecipeByCategory(category, &recipeList); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get recipes"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": recipeList})
+}

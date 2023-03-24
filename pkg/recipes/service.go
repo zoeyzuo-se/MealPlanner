@@ -46,6 +46,11 @@ func GetRecipeByName(name string, recipe *models.Recipe) error {
 	return result.Error
 }
 
+func GetRecipeByCategory(category string, recipes *[]models.Recipe) error {
+	result := dbs.Database.Db.Where("recipe_category = ?", category).Find(recipes)
+	return result.Error
+}
+
 func GetRecipes(recipes *[]models.Recipe) error {
 	result := dbs.Database.Db.Find(recipes)
 	return result.Error
