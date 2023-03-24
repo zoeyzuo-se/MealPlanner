@@ -50,3 +50,8 @@ func GetRecipes(recipes *[]models.Recipe) error {
 	result := dbs.Database.Db.Find(recipes)
 	return result.Error
 }
+
+func UpdateRecipe(name string, recipe models.Recipe) error {
+	result := dbs.Database.Db.Model(&models.Recipe{}).Where("recipe_name = ?", name).Updates(recipe)
+	return result.Error
+}
