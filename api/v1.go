@@ -19,6 +19,7 @@ func NewRESTAPI() *RESTApiv1 {
 	router.POST("/recipe", api.AddRecipe)
 	router.GET("/recipe/:name", api.GetRecipeByName)
 	router.GET("/recipes", api.GetRecipes)
+	router.PUT("/recipe/:name", api.UpdateRecipe)
 
 	return api
 }
@@ -32,6 +33,11 @@ func (api *RESTApiv1) AddRecipe(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&newRecipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := recipes.GetRecipeByName(newRecipe.RecipeName, &newRecipe); err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Recipe already exists"})
 		return
 	}
 
@@ -73,4 +79,36 @@ func (api *RESTApiv1) GetRecipes(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": recipeList})
+}
+
+func (api *RESTApiv1) UpdateRecipe(c *gin.Context) {
+	name := c.Param("name")
+	var recipe models.Recipe
+
+	if err := recipes.GetRecipeByName(name, &recipe); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Recipe not found"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&recipe); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !recipes.IsRecipeCategoryValid(recipe) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": recipes.GenerateCategoryError()})
+		return
+	}
+
+	if !recipes.IsRecipeMethodValid(recipe) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": recipes.GenerateMethodError()})
+		return
+	}
+
+	if err := recipes.UpdateRecipe(name, recipe); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update recipe"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": recipe})
 }
