@@ -55,3 +55,8 @@ func UpdateRecipe(name string, recipe models.Recipe) error {
 	result := dbs.Database.Db.Model(&models.Recipe{}).Where("recipe_name = ?", name).Updates(recipe)
 	return result.Error
 }
+
+func DeleteRecipe(recipe *models.Recipe) error {
+	result := dbs.Database.Db.Delete(recipe)
+	return result.Error
+}
