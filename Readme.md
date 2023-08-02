@@ -1,3 +1,35 @@
+# Meal Planner
+Meal planner is a service that allows you to store your recipes and plan your meals for the week.
+
+The API can be accessed at https://fantastic-meal-planner.azurewebsites.net/
+
+## Features
+- [x] Add recipe
+- [x] View recipes
+- [x] Update recipe by name
+- [x] Delete recipe by name
+- [x] Get recipe by name
+- [ ] Add recipes to meal plan
+- [ ] View meal plan for the week
+- [ ] Add ingredients to recipe
+- [ ] Update ingredients in recipe
+- [ ] Delete ingredients from recipe
+- [ ] Making suggestion on what to cook based on ingredients - OpenAI
+- [ ] Making suggestion on what to cook based on recipes - OpenAI
+- [ ] Add ingredients to shopping list
+- [ ] View shopping list
+- [ ] Update shopping list
+- [ ] View ingredients
+
+
+## Tech Stack
+- Go
+- Azure SQL
+- Azure Web App for Containers
+- Azure Container Registry
+- Docker
+
+
 ## Azure resources created
 - Azure SQL Server koopa-mealplanner
 - Azure SQL Database mealplanner
