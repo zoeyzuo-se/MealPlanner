@@ -20,5 +20,6 @@ func main() {
 	}
 
 	api := api.NewRESTAPI()
+
 	api.Serve(":8080")
 }

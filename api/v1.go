@@ -6,12 +6,31 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/meal-planner/models"
 	"github.com/meal-planner/pkg/recipes"
+
+	_ "github.com/meal-planner/docs"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type RESTApiv1 struct {
 	router *gin.Engine
 }
 
+// @title MealPlanner APIs
+// @version 1.0
+// @description Testing Swagger APIs.
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+// @securityDefinitions.apiKey JWT
+// @in header
+// @name token
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemes http
 func NewRESTAPI() *RESTApiv1 {
 	router := gin.Default()
 	api := &RESTApiv1{router}
@@ -21,6 +40,8 @@ func NewRESTAPI() *RESTApiv1 {
 	router.GET("/recipes", api.GetRecipes)
 	router.PUT("/recipe/:name", api.UpdateRecipe)
 	router.DELETE("/recipe/:name", api.DeleteRecipe)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	return api
 }
@@ -71,6 +92,12 @@ func (api *RESTApiv1) GetRecipeByName(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": recipe})
 }
 
+// @Summary Get all available recipes in the system
+// @Description Get recipes
+// @ID get-recipes
+// @Produce  json
+// @Success 200 {string} string  "ok"
+// @Router /recipes [get]
 func (api *RESTApiv1) GetRecipes(c *gin.Context) {
 	var recipeList []models.Recipe
 
