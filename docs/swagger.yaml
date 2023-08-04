@@ -1,0 +1,29 @@
+info:
+  contact: {}
+paths:
+  /recipe/{name}:
+    put:
+      consumes:
+      - application/json
+      description: Update a recipe by its name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update a recipe
+  /recipes:
+    get:
+      description: Get recipes
+      operationId: get-recipes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Get all available recipes in the system
+swagger: "2.0"
