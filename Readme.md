@@ -4,11 +4,9 @@ Meal planner is a service that allows you to store your recipes and plan your me
 The API can be accessed at https://fantastic-meal-planner.azurewebsites.net/
 
 ## Features
-- [x] Add recipe
-- [x] View recipes
-- [x] Update recipe by name
-- [x] Delete recipe by name
-- [x] Get recipe by name
+- [x] CRUD of recipes
+- [ ] CRUD of ingredients
+- [ ] CRUD of shopping list
 - [ ] Add recipes to meal plan
 - [ ] View meal plan for the week
 - [ ] Add ingredients to recipe
